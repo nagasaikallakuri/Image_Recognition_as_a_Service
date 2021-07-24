@@ -1,0 +1,3 @@
+#!/bin/bash
+cd /home/ubuntu/classifier
+java -jar app.java
