@@ -1,6 +1,16 @@
 # Cloud-Computing-Project1 # Image_Recognition_as_a_Service
 
-This project was bootstrapped with Create React App.
+This is a Cloud Project that uses a Machine Learning Algorithm to categorize images provided by users.
+
+The main insights of the Project are:
+
+*	Developed a cloud application for image identification using Node.js (web tier), ReactJS (app tier), and a custom AMI with an image classifier model using IaaS cloud (AWS). SQS Queues were used to store request and response messages.
+
+*	Implemented a load balancer procedure to ensure application elasticity by scaling in and out on demand.
+
+* All the inputs (images) and outputs (detection results) are stored in Simple Storage Service(S3) for persistence.
+
+Detailed Technical Details of the Project are below
 
 Available Scripts
 In the project directory, you can run:
