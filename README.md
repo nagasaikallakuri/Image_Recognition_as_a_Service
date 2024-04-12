@@ -1,72 +1,28 @@
-# Cloud-Computing-Project1 # Image_Recognition_as_a_Service
+# Image-Recognition-as-a-Service-on-AWS
+## Problem Statement 
+This application employs a deep-learning model for image recognition. Users will send and receive multiple requests and responses for images from the application. Since the application deals with images and uses a deep-learning model, the processing can become time-consuming and the load on the application might increase as well. These problems can lead to a system crash and all the queued requests and responses will be lost. This system is not ideal for a good consumer experience and hence we are leveraging the advantages of Infrastructure as a Service(IaaS) to implement and deploy our service(image-recognition). 
 
-This is a Cloud Project that uses a Machine Learning Algorithm to categorize images provided by users.
+Infrastructure as a service (IaaS) is a computing infrastructure, provisioned and managed over the internet. IaaS scales in and out in response to demand. IaaS is useful for handling unpredictable demand and steadily growing storage needs. It saves consumers money and time by allowing them to avoid purchasing and maintaining their own physical servers and data infrastructure. Each resource is available as a stand-alone service.
 
-The main insights of the Project are:
+###          < This application is deployed using Amazon Web Services (AWS) >
 
-*	Developed a cloud application for image identification using Node.js (web tier), ReactJS (app tier), and a custom AMI with an image classifier model using IaaS cloud (AWS). SQS Queues were used to store request and response messages.
+## Architecture:
+![Alt text](Web-tier/public/iaas.jpeg)
+##### Elastic Compute Cloud: 
+* In the AWS Cloud, Amazon Elastic Compute Cloud (Amazon EC2) offers scalable computing capacity. Using Amazon EC2 eliminates the need for upfront hardware investment, allowing customers to build and deploy applications more quickly. Amazon EC2 allows creating as many or as few virtual servers as needed and also enables customers to scale in or out to accommodate shifts in demand, reducing the need to forecast traffic.
+* An instance is a virtual server in the cloud. Created 1 EC2 instance for the web tier and depending upon the load(requests), up to 19 App Tier EC2 instances will be created and terminated (scaled in and scaled out) automatically.
+##### Simple Queue Service:
+* Amazon Simple Queue Service(SQS) is a fully managed message queuing service for decoupling and scaling distributed systems. SQS eliminates the difficulty and overhead of maintaining and running message-oriented middleware. SQS is used to send, store, and receive messages.
+* Used 2 Simple Queue Services in this application which is used to queue requests from the users and responses from the app tier. Used Standard queues as we need maximum throughput, and at-least-once delivery. We have also set the visibility timeout to 5 minutes.
+##### Simple Storage Service: 
+* Amazon Simple Storage Service(S3) is an object storage service that offers scalability, durability and performance.
+* Used two S3 buckets, one to store images from the user requests in the web tier and another one to store responses from the deep-learning model from the app instances. All the inputs (images) and outputs (detection results) are stored in Simple Storage Service for persistence.
+##### Amazon Machine Image: 
+* The Amazon Machine Images (AMI) are like templates that are configured using an operating system, an application server, and any additional application required to deliver a service or a part of it. An AMI is a master image for the creation of EC2 instances in the Amazon Web Services (AWS) environment. 
+* In this system, we created a custom AMI from an existing AMI that has an image recognition deep-learning model along with all the scripts needed to read requests, process images, save responses and terminate an instance. Depending upon the load, our load balancer will set up multiple instances (app-tier) from this machine image where the instances are of a similar configuration.
 
-*	Implemented a load balancer procedure to ensure application elasticity by scaling in and out on demand.
+#### Load Balancer: 
+The load balancer's primary responsibility is to continuously track the number of messages in the request queue and to scale-in and scale-out the creation of app instances automatically. Maximum instances, available instances, and required instances are the three main variables in a load balancer. The EC2 instances module provides a count of the current number of app instances running for each request. The total number of requests to be handled has also been received from the SQS request queue. We run our load balancer every second, and the load balancer creates app instances in our framework based on the visible messages in the SQS request queue and the values from the above three main variables. .In this way, we were able to incorporate a Load Balancer in our application to scale-in and scale-out creation of app instances automatically.
 
-* All the inputs (images) and outputs (detection results) are stored in Simple Storage Service(S3) for persistence.
 
-Detailed Technical Details of the Project are below
 
-Available Scripts
-In the project directory, you can run:
-
-yarn start
-
-Runs the app in the development mode.
-Open http://localhost:3000 to view it in the browser.
-
-The page will reload if you make edits.
-You will also see any lint errors in the console.
-
-yarn test
-
-Launches the test runner in the interactive watch mode.
-See the section about running tests for more information.
-
-yarn build
-
-Builds the app for production to the build folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.
-Your app is ready to be deployed!
-
-See the section about deployment for more information.
-
-yarn eject
-
-Note: this is a one-way operation. Once you eject, you can’t go back!
-
-If you aren’t satisfied with the build tool and configuration choices, you can eject at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except eject will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use eject. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-Learn More
-You can learn more in the Create React App documentation.
-
-To learn React, check out the React documentation.
-
-Code Splitting
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-Analyzing the Bundle Size
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-Making a Progressive Web App
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-Advanced Configuration
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-Deployment
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-yarn build fails to minify
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
